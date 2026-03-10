@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap');
+
+:root {
+  --bg:      #f7f3ff;
+  --surface: #ffffff;
+  --text:    #1a1a2e;
+  --radius:  10px;
+  --font:    'Fredoka One', system-ui, sans-serif;
+}
+
+body.dark {
+  --bg:      #0f0f1a;
+  --surface: #1a1a2e;
+  --text:    #f0f0ff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  touch-action: manipulation;
+  overflow: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+.rotate-msg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  text-align: center;
+  padding: 2rem;
+}
+@media (orientation: portrait) { .rotate-msg { display: flex; } }
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.8rem;
+  width: 100%;
+  height: 100dvh;
+  padding: 2rem 4rem;
+}
+
+.logo-img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+/* ── Buttons ──────────────────────────────── */
+.btn-group {
+  display: flex;
+  flex-direction: row;
+  gap: 0.9rem;
+}
+
+button {
+  padding: 0.7rem 1.6rem;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 1.05rem;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s, box-shadow 0.1s;
+  box-shadow: 0 3px 0px rgba(0,0,0,0.2);
+}
+
+button:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+.btn-play     { background: #FF6B6B; }
+.btn-multi    { background: #44A8FF; }
+.btn-leader   { background: #3CB85C; color: #fff; }
+.btn-settings { background: #A855F7; }
+
+/* ── Settings panel ───────────────────────── */
+.settings-panel {
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: var(--radius);
+  padding: 1rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 240px;
+  box-shadow: 3px 3px 0px var(--text);
+}
+
+.settings-panel h3 { font-size: 1rem; color: var(--text); }
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.close-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--surface);
+  border: 2px solid var(--text);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 0.95rem;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 2px 2px 0px var(--text);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.close-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+
+.toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: #ddd;
+  border: 2px solid var(--text);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle input:checked + .toggle-track { background: #44A8FF; }
+.toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  background: var(--text);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: transform 0.2s;
+}
+.toggle input:checked + .toggle-track::after { transform: translateX(20px); }
