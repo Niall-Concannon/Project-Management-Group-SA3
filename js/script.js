@@ -71,7 +71,8 @@ function drawingScreen() {
   const ctx = canvas.getContext("2d");
 
   let currentColor = "#1a1a2e"; // marker colour — black
-
+  let erasing = false;
+  
   // fit the canvas to whatever space it has, and keep the drawing if the window resizes
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
@@ -105,14 +106,18 @@ function drawingScreen() {
   function draw(e) {
     e.preventDefault();
     if (!drawing) return;
+
     const [x, y] = getPos(e);
+
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
     ctx.lineTo(x, y);
-    ctx.strokeStyle = currentColor;
-    ctx.lineWidth   = 4;
+
+    ctx.strokeStyle = erasing ? "#ffffff" : currentColor; // erase with white
+    ctx.lineWidth   = erasing ? 20 : 4; // thicker eraser
     ctx.lineCap     = "round";
     ctx.lineJoin    = "round";
+
     ctx.stroke();
     [lastX, lastY] = [x, y];
   }
@@ -138,49 +143,82 @@ function drawingScreen() {
 
   el("button", {
     class: "tool-btn",
-    onclick() { currentColor = "#1a1a2e"; colorPanel.style.display = "none"; } //Black
+    onclick() { erasing = false;currentColor = "#1a1a2e"; colorPanel.style.display = "none"; } //Black
   }, "⚫"),
 
   el("button", {
     class: "tool-btn",
-    onclick() { currentColor = "#ff4d4d"; colorPanel.style.display = "none"; } //Red
+    onclick() { erasing = false;currentColor = "#ff4d4d"; colorPanel.style.display = "none"; } //Red
   }, "🔴"),
 
   el("button", {
     class: "tool-btn",
-    onclick() { currentColor = "#3b82f6"; colorPanel.style.display = "none"; } // Blue
+    onclick() { erasing = false;currentColor = "#3b82f6"; colorPanel.style.display = "none"; } // Blue
   }, "🔵"),
 
   el("button", {
     class: "tool-btn",
-    onclick() { currentColor = "#22c55e"; colorPanel.style.display = "none"; } // Green
+    onclick() { erasing = false;currentColor = "#22c55e"; colorPanel.style.display = "none"; } // Green
   }, "🟢"),
 
   el("button", {
   class: "tool-btn",
-  onclick() { currentColor = "#facc15"; colorPanel.style.display = "none"; } // Yellow
+  onclick() { erasing = false;currentColor = "#facc15"; colorPanel.style.display = "none"; } // Yellow
 }, "🟡"),
 
 el("button", {
   class: "tool-btn",
-  onclick() { currentColor = "#f97316"; colorPanel.style.display = "none"; } // Orange
+  onclick() { erasing = false;currentColor = "#f97316"; colorPanel.style.display = "none"; } // Orange
 }, "🟠"),
 
 el("button", {
   class: "tool-btn",
-  onclick() { currentColor = "#a855f7"; colorPanel.style.display = "none"; } // Purple
+  onclick() { erasing = false;currentColor = "#a855f7"; colorPanel.style.display = "none"; } // Purple
 }, "🟣")
 );
   
   // tool sidebar — only the marker for now, more tools get added here later
-  const sidebar = el("div", { class: "tool-sidebar" },
-    el("button", { class: "tool-btn tool-active", title: "Marker", 
-      onclick() {
-        colorPanel.style.display =
-          colorPanel.style.display === "none" ? "flex" : "none";
-      }
-    }, "✏️"),
+  // create buttons first so we can control their classes
+  // create buttons first
+  const markerBtn = el("button", { 
+    class: "tool-btn tool-active",
+    title: "Marker",
+    onclick() {
+      erasing = false;
+
+      markerBtn.classList.add("tool-active");
+      eraserBtn.classList.remove("tool-active");
+
+      colorPanel.style.display =
+        colorPanel.style.display === "none" ? "flex" : "none";
+    }
+  }, "✏️");
+
+  const eraserBtn = el("button", {
+    class: "tool-btn",
+    title: "Eraser",
+    onclick() {
+      erasing = true;
+
+      eraserBtn.classList.add("tool-active");
+      markerBtn.classList.remove("tool-active");
+
+      colorPanel.style.display = "none";
+    }
+  }, "🧽");
+
+  // group the marker and colour panel together
+  const markerGroup = el("div", {
+    style: "display:flex; flex-direction:column; align-items:center;"
+  },
+    markerBtn,
     colorPanel
+  );
+
+  // sidebar
+  const sidebar = el("div", { class: "tool-sidebar" },
+    markerGroup,
+    eraserBtn
   );
 
   // back button takes the player back to the main menu
