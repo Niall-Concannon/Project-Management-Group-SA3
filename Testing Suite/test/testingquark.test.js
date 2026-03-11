@@ -116,5 +116,39 @@ describe("settingsPanel()", () => {
   });
 });
 
+test("check if the checkbox is unchecked when body does not have have a 'dark' class ", () =>{
+  document.body.classList.remove("dark");
+    const panel = settingsPanel(() => {});
+    const checkbox = panel.querySelector("input[type='checkbox']");
+    expect(checkbox.checked).toBe(false);
+});
+
+
+test("check if the checkbox is unchecked when body does have have a 'dark' class ", () =>{
+  document.body.classList.remove("dark");
+    const panel = settingsPanel(() => {});
+    const checkbox = panel.querySelector("input[type='checkbox']");
+    expect(checkbox.checked).toBe(true);
+});
+
+test("toggling the checkbox adds 'dark' class to body", () => {
+    const panel = settingsPanel(() => {});
+    const checkbox = panel.querySelector("input[type='checkbox']");
+    checkbox.checked = true;
+    checkbox.dispatchEvent(new Event("change"));
+    expect(document.body.classList.contains("dark")).toBe(true);
+  });
+
+  test("toggling the checkbox off removes 'dark' class from body", () => {
+    document.body.classList.add("dark");
+    const panel = settingsPanel(() => {});
+    const checkbox = panel.querySelector("input[type='checkbox']");
+    checkbox.checked = false;
+    checkbox.dispatchEvent(new Event("change"));
+    expect(document.body.classList.contains("dark")).toBe(false);
+  });
+
+  
+
 const { TestEnvironment } = require('jest-environment-jsdom');
-const {settingsPanel} = require('../src/game');
+const {settingsPanel, mainMenu, el} = require('../src/game');
