@@ -1,4 +1,4 @@
-
+ 
 
 describe("el()", () => {
   test("creates an element with the correct tag", () => {
@@ -102,5 +102,19 @@ describe("mainMenu()", () => {
   });
 });
 
+//settings panel
+describe("settingsPanel()", () => {
+  test("renders a panel with class 'settings-panel'", () => {
+    const panel = settingsPanel(() => {});
+    expect(panel.className).toBe("settings-panel");
+  });
 
-const { el, rotateMsg, show, settingsPanel, drawingScreen, mainMenu } = require('../src/game');
+  test("contains a dark-mode checkbox input", () => {
+    const panel = settingsPanel(() => {});
+    const checkbox = panel.querySelector("input[type='checkbox']");
+    expect(checkbox).not.toBeNull();
+  });
+});
+
+const { TestEnvironment } = require('jest-environment-jsdom');
+const {settingsPanel} = require('../src/game');
