@@ -72,6 +72,8 @@ function drawingScreen() {
 
   let currentColor = "#1a1a2e"; // marker colour — black
   let erasing = false;
+  let undoStack = [];
+  let redoStack = [];
   
   // fit the canvas to whatever space it has, and keep the drawing if the window resizes
   function resizeCanvas() {
@@ -95,10 +97,18 @@ function drawingScreen() {
     return [src.clientX - rect.left, src.clientY - rect.top];
   }
 
+  function saveState() {
+    undoStack.push(canvas.toDataURL());
+    redoStack = []; // clear redo history after new drawing
+  }
+
   // player puts pen/finger down — start drawing from this point
   function startDraw(e) {
     e.preventDefault();
     drawing = true;
+
+    saveState(); // store canvas before drawing begins
+
     [lastX, lastY] = getPos(e);
   }
 
@@ -126,6 +136,32 @@ function drawingScreen() {
   function stopDraw(e) {
     e.preventDefault();
     drawing = false;
+  }
+
+  function undo() {
+    if (undoStack.length === 0) return;
+
+    redoStack.push(canvas.toDataURL());
+
+    const img = new Image();
+    img.src = undoStack.pop();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+  }
+
+  function redo() {
+    if (redoStack.length === 0) return;
+
+    undoStack.push(canvas.toDataURL());
+
+    const img = new Image();
+    img.src = redoStack.pop();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
   }
 
   // mouse events
@@ -217,6 +253,18 @@ el("button", {
     }
   }, "🗑️");
 
+  const undoBtn = el("button", {
+    class: "tool-btn",
+    title: "Undo",
+    onclick: undo
+  }, "↶");
+
+  const redoBtn = el("button", {
+    class: "tool-btn",
+    title: "Redo",
+    onclick: redo
+  }, "↷");
+
   // group the marker and colour panel together
   const markerGroup = el("div", {
     style: "display:flex; flex-direction:column; align-items:center;"
@@ -229,6 +277,8 @@ el("button", {
   const sidebar = el("div", { class: "tool-sidebar" },
     markerGroup,
     eraserBtn,
+    undoBtn,
+    redoBtn,
     clearBtn
   );
 
