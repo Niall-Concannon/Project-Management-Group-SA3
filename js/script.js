@@ -70,6 +70,12 @@ function drawingScreen() {
   const canvas = el("canvas", { class: "draw-canvas" });
   const ctx = canvas.getContext("2d");
 
+  let timeLeft = 30;
+  let timeUp = false;
+
+  const timerBox = el("div", { class: "game-timer" }, `${timeLeft}s`); // Timer shows how much time is left to draw
+  const timeUpMsg = el("div", { class: "time-up-msg" }, "Time's up! Game over!"); // Game over message
+
   let currentColor = "#1a1a2e"; // marker colour — black
   let erasing = false;
   let undoStack = [];
@@ -104,6 +110,8 @@ function drawingScreen() {
 
   // player puts pen/finger down — start drawing from this point
   function startDraw(e) {
+    if (timeUp) return;
+
     e.preventDefault();
     drawing = true;
 
@@ -283,12 +291,14 @@ el("button", {
   );
 
   // back button takes the player back to the main menu
-  const backBtn = el("button", { class: "back-btn", onclick() { show(mainMenu()); } }, "←");
+  const backBtn = el("button", { class: "back-btn", onclick() { clearInterval(timerInterval); show(mainMenu()); } }, "←");
 
   const screen = el("div", { class: "draw-screen" },
     sidebar,
     el("div", { class: "canvas-wrap" }, canvas),
-    backBtn,
+    timerBox,
+    timeUpMsg,
+    backBtn
   );
 
   // wait one frame before resizing so the layout has settled
@@ -296,6 +306,20 @@ el("button", {
 
   // re-fit canvas if the window changes size
   window.addEventListener("resize", resizeCanvas);
+
+  const timerInterval = setInterval(() => {
+  timeLeft--;
+  timerBox.textContent = `${timeLeft}s`;
+
+  // end round automatically and disable drawing when the timer reaches 0
+  if (timeLeft <= 0) {
+    clearInterval(timerInterval);
+    timeUp = true;
+    drawing = false;
+    timerBox.textContent = "0s";
+    timeUpMsg.style.display = "block";
+  }
+}, 1000);
 
   return screen;
 }

@@ -235,3 +235,33 @@ button:active {
 }
 
 .back-btn:active { transform: translate(2px,2px); box-shadow: none; }
+
+.game-timer {
+  position: absolute;
+  top: 0.75rem;
+  left: 80px;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--text);
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-size: 1rem;
+  box-shadow: 2px 2px 0px var(--text);
+  z-index: 5;
+}
+
+.time-up-msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--text);
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  font-size: 1.3rem;
+  box-shadow: 3px 3px 0px var(--text);
+  z-index: 10;
+  display: none;
+}
